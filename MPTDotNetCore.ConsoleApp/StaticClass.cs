@@ -4,8 +4,8 @@ namespace MPTDotNetCore.ConsoleApp;
 
 public class StaticClass
 {
-    public static SqlConnectionStringBuilder stringBuilder;
-    public static SqlConnection connection;
+    private static SqlConnectionStringBuilder stringBuilder;
+    internal static SqlConnection connection;
 
     static StaticClass()
     {
@@ -28,7 +28,7 @@ public class StaticClass
 
     public const string Content = "BlogContent";
 
-    public const string SelectQuery = @"SELECT * FROM Tbl_Blog";
+    public static string SelectQuery = @"SELECT * FROM Tbl_Blog";
 
     public static string CreateQuery = @"INSERT INTO Tbl_Blog (BlogTitle, BlogAuthor, BlogContent) VALUES(@BlogTitle, @BlogAuthor, @BlogContent)";
 

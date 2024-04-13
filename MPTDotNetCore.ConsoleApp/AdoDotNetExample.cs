@@ -5,6 +5,13 @@ namespace MPTDotNetCore.ConsoleApp;
 
 public class AdoDotNetExample
 {
+    private readonly SqlConnection connection;
+
+    public AdoDotNetExample(SqlConnection connection)
+    {
+        this.connection = connection ?? throw new ArgumentNullException(nameof(connection));
+    }
+
     public void Run()
     {
         while (true)
@@ -16,12 +23,14 @@ public class AdoDotNetExample
             Console.WriteLine("4. Update");
             Console.WriteLine("5. Delete");
             Console.WriteLine("6. Exit");
+            Console.WriteLine("===============================");
 
             string input;
             do
             {
                 Console.Write("Enter your choice: ");
                 input = Console.ReadLine()!;
+                Console.WriteLine("===============================");
             } while (string.IsNullOrEmpty(input));
 
             switch (input)
@@ -45,6 +54,7 @@ public class AdoDotNetExample
                     return;
                 default:
                     Console.WriteLine("Invalid input. Please enter a number between 1 and 6.");
+                    Console.WriteLine("===============================");
                     break;
             }
         }
@@ -54,25 +64,25 @@ public class AdoDotNetExample
     {
         try
         {
-            using (SqlConnection connection = StaticClass.connection)
-            {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(StaticClass.SelectQuery, connection))
-                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                {
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
+            if (connection.State != ConnectionState.Open) connection.Open();
 
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        Console.WriteLine($"Id : {dr[StaticClass.Id]}");
-                        Console.WriteLine($"Title : {dr[StaticClass.Title]}");
-                        Console.WriteLine($"Author : {dr[StaticClass.Author]}");
-                        Console.WriteLine($"Content : {dr[StaticClass.Content]}");
-                        Console.WriteLine("===============================");
-                    }
+            using (SqlCommand cmd = new SqlCommand(StaticClass.SelectQuery, connection))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+            {
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    Console.WriteLine($"Id : {dr[StaticClass.Id]}");
+                    Console.WriteLine($"Title : {dr[StaticClass.Title]}");
+                    Console.WriteLine($"Author : {dr[StaticClass.Author]}");
+                    Console.WriteLine($"Content : {dr[StaticClass.Content]}");
+                    Console.WriteLine("===============================");
                 }
             }
+
+            connection.Close();
         }
         catch (Exception ex)
         {
@@ -84,35 +94,47 @@ public class AdoDotNetExample
     {
         try
         {
-            Console.Write("Enter the BlogId : ");
-            if (!int.TryParse(Console.ReadLine(), out int id))
-            {
-                Console.WriteLine("Invalid input. Please enter a valid integer.");
-                return;
-            }
+            int id;
+            bool isValidId = false;
 
-            using (SqlConnection connection = StaticClass.connection)
+            do
             {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(StaticClass.EditQuery, connection))
+                Console.Write("Enter the Blog Id : ");
+                string idInput = Console.ReadLine()!;
+
+                if (int.TryParse(idInput, out id))
                 {
-                    cmd.Parameters.AddWithValue("@BlogId", id);
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    isValidId = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input! Please enter a valid integer.");
+                }
+            } while (!isValidId);
+
+            if (connection.State != ConnectionState.Open) connection.Open();
+
+            using (SqlCommand cmd = new SqlCommand(StaticClass.EditQuery, connection))
+            {
+                cmd.Parameters.AddWithValue("@BlogId", id);
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    if (dt.Rows.Count == 0)
                     {
-                        DataTable dt = new DataTable();
-                        adapter.Fill(dt);
-                        if (dt.Rows.Count == 0)
-                        {
-                            Console.WriteLine("No data found.");
-                            return;
-                        }
-                        DataRow dr = dt.Rows[0];
-                        Console.WriteLine($"Title: {dr["BlogTitle"]}");
-                        Console.WriteLine($"Author: {dr["BlogAuthor"]}");
-                        Console.WriteLine($"Content: {dr["BlogContent"]}");
+                        Console.WriteLine("No data found.");
+                        return;
                     }
+                    DataRow dr = dt.Rows[0];
+                    Console.WriteLine($"Title: {dr["BlogTitle"]}");
+                    Console.WriteLine($"Author: {dr["BlogAuthor"]}");
+                    Console.WriteLine($"Content: {dr["BlogContent"]}");
+                    Console.WriteLine("===============================");
                 }
             }
+
+            connection.Close();
         }
         catch (Exception ex)
         {
@@ -160,19 +182,20 @@ public class AdoDotNetExample
                 }
             } while (string.IsNullOrWhiteSpace(content));
 
-            using (SqlConnection connection = StaticClass.connection)
+            if (connection.State != ConnectionState.Open) connection.Open();
+
+            using (SqlCommand cmd = new SqlCommand(StaticClass.CreateQuery, connection))
             {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(StaticClass.CreateQuery, connection))
-                {
-                    cmd.Parameters.AddWithValue("@BlogTitle", title);
-                    cmd.Parameters.AddWithValue("@BlogAuthor", author);
-                    cmd.Parameters.AddWithValue("@BlogContent", content);
-                    int result = cmd.ExecuteNonQuery();
-                    string message = result > 0 ? "Saving Successful." : "Saving Failed.";
-                    Console.WriteLine(message);
-                }
+                cmd.Parameters.AddWithValue("@BlogTitle", title);
+                cmd.Parameters.AddWithValue("@BlogAuthor", author);
+                cmd.Parameters.AddWithValue("@BlogContent", content);
+                int result = cmd.ExecuteNonQuery();
+                string message = result > 0 ? "Saving Successful." : "Saving Failed.";
+                Console.WriteLine(message);
+                Console.WriteLine("===============================");
             }
+
+            connection.Close();
         }
         catch (Exception ex)
         {
@@ -238,20 +261,22 @@ public class AdoDotNetExample
                 }
             } while (string.IsNullOrWhiteSpace(content));
 
-            using (SqlConnection connection = StaticClass.connection)
+            if (connection.State != ConnectionState.Open) connection.Open();
+
+            using (SqlCommand cmd = new SqlCommand(StaticClass.UpdateQuery, connection))
             {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(StaticClass.UpdateQuery, connection))
-                {
-                    cmd.Parameters.AddWithValue("@BlogId", id);
-                    cmd.Parameters.AddWithValue("@BlogTitle", title);
-                    cmd.Parameters.AddWithValue("@BlogAuthor", author);
-                    cmd.Parameters.AddWithValue("@BlogContent", content);
-                    int result = cmd.ExecuteNonQuery();
-                    string message = result > 0 ? "Update Successful." : "Update Failed.";
-                    Console.WriteLine(message);
-                }
+                cmd.Parameters.AddWithValue("@BlogId", id);
+                cmd.Parameters.AddWithValue("@BlogTitle", title);
+                cmd.Parameters.AddWithValue("@BlogAuthor", author);
+                cmd.Parameters.AddWithValue("@BlogContent", content);
+                Console.WriteLine("===============================");
+                int result = cmd.ExecuteNonQuery();
+                string message = result > 0 ? "Update Successful." : "Update Failed.";
+                Console.WriteLine(message);
+                Console.WriteLine("===============================");
             }
+
+            connection.Close();
         }
         catch (Exception ex)
         {
@@ -281,17 +306,18 @@ public class AdoDotNetExample
                 }
             } while (!isValidId);
 
-            using (SqlConnection connection = StaticClass.connection)
+            if (connection.State != ConnectionState.Open) connection.Open();
+
+            using (SqlCommand cmd = new SqlCommand(StaticClass.DeleteQuery, connection))
             {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(StaticClass.DeleteQuery, connection))
-                {
-                    cmd.Parameters.AddWithValue("@BlogId", id);
-                    int result = cmd.ExecuteNonQuery();
-                    string message = result > 0 ? "Deleting Successful." : "Deleting Failed.";
-                    Console.WriteLine(message);
-                }
+                cmd.Parameters.AddWithValue("@BlogId", id);
+                int result = cmd.ExecuteNonQuery();
+                string message = result > 0 ? "Deleting Successful." : "Deleting Failed.";
+                Console.WriteLine(message);
+                Console.WriteLine("===============================");
             }
+
+            connection.Close();
         }
         catch (Exception ex)
         {
