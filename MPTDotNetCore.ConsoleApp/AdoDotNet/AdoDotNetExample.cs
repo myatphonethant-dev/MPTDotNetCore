@@ -1,15 +1,17 @@
-﻿using System.Data;
+﻿using MPTDotNetCore.ClassLibrary.Models;
+using MPTDotNetCore.ClassLibrary.Services;
+using System.Data;
 using System.Data.SqlClient;
 
-namespace MPTDotNetCore.ConsoleApp;
+namespace MPTDotNetCore.ConsoleApp.AdoDotNet;
 
 public class AdoDotNetExample
 {
-    private readonly SqlConnection connection;
+    private readonly DbService _db;
 
-    public AdoDotNetExample(SqlConnection connection)
+    public AdoDotNetExample(DbService db)
     {
-        this.connection = connection ?? throw new ArgumentNullException(nameof(connection));
+        _db = db;
     }
 
     public void Run()
@@ -64,9 +66,9 @@ public class AdoDotNetExample
     {
         try
         {
-            if (connection.State != ConnectionState.Open) connection.Open();
+            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
 
-            using (SqlCommand cmd = new SqlCommand(StaticClass.SelectQuery, connection))
+            using (SqlCommand cmd = new SqlCommand(StaticModel.SelectQuery, connection))
             using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
             {
                 DataTable dt = new DataTable();
@@ -74,10 +76,10 @@ public class AdoDotNetExample
 
                 foreach (DataRow dr in dt.Rows)
                 {
-                    Console.WriteLine($"Id : {dr[StaticClass.Id]}");
-                    Console.WriteLine($"Title : {dr[StaticClass.Title]}");
-                    Console.WriteLine($"Author : {dr[StaticClass.Author]}");
-                    Console.WriteLine($"Content : {dr[StaticClass.Content]}");
+                    Console.WriteLine($"Id : {dr[StaticModel.Id]}");
+                    Console.WriteLine($"Title : {dr[StaticModel.Title]}");
+                    Console.WriteLine($"Author : {dr[StaticModel.Author]}");
+                    Console.WriteLine($"Content : {dr[StaticModel.Content]}");
                     Console.WriteLine("===============================");
                 }
             }
@@ -112,9 +114,9 @@ public class AdoDotNetExample
                 }
             } while (!isValidId);
 
-            if (connection.State != ConnectionState.Open) connection.Open();
+            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
 
-            using (SqlCommand cmd = new SqlCommand(StaticClass.EditQuery, connection))
+            using (SqlCommand cmd = new SqlCommand(StaticModel.EditQuery, connection))
             {
                 cmd.Parameters.AddWithValue("@BlogId", id);
                 using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
@@ -182,9 +184,9 @@ public class AdoDotNetExample
                 }
             } while (string.IsNullOrWhiteSpace(content));
 
-            if (connection.State != ConnectionState.Open) connection.Open();
+            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
 
-            using (SqlCommand cmd = new SqlCommand(StaticClass.CreateQuery, connection))
+            using (SqlCommand cmd = new SqlCommand(StaticModel.CreateQuery, connection))
             {
                 cmd.Parameters.AddWithValue("@BlogTitle", title);
                 cmd.Parameters.AddWithValue("@BlogAuthor", author);
@@ -261,9 +263,9 @@ public class AdoDotNetExample
                 }
             } while (string.IsNullOrWhiteSpace(content));
 
-            if (connection.State != ConnectionState.Open) connection.Open();
+            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
 
-            using (SqlCommand cmd = new SqlCommand(StaticClass.UpdateQuery, connection))
+            using (SqlCommand cmd = new SqlCommand(StaticModel.UpdateQuery, connection))
             {
                 cmd.Parameters.AddWithValue("@BlogId", id);
                 cmd.Parameters.AddWithValue("@BlogTitle", title);
@@ -306,9 +308,9 @@ public class AdoDotNetExample
                 }
             } while (!isValidId);
 
-            if (connection.State != ConnectionState.Open) connection.Open();
+            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
 
-            using (SqlCommand cmd = new SqlCommand(StaticClass.DeleteQuery, connection))
+            using (SqlCommand cmd = new SqlCommand(StaticModel.DeleteQuery, connection))
             {
                 cmd.Parameters.AddWithValue("@BlogId", id);
                 int result = cmd.ExecuteNonQuery();

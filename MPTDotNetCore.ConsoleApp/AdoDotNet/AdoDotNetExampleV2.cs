@@ -1,16 +1,17 @@
-﻿using System;
+﻿using MPTDotNetCore.ClassLibrary.Models;
+using MPTDotNetCore.ClassLibrary.Services;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace MPTDotNetCore.ConsoleApp
+namespace MPTDotNetCore.ConsoleApp.AdoDotNet
 {
     public class AdoDotNetExampleV2
     {
-        private readonly SqlConnection connection;
+        private readonly DbService _db;
 
-        public AdoDotNetExampleV2(SqlConnection connection)
+        public AdoDotNetExampleV2(DbService db)
         {
-            this.connection = connection ?? throw new Exception(connection!.ToString());
+            _db = db;
         }
 
         public void Run()
@@ -72,7 +73,7 @@ namespace MPTDotNetCore.ConsoleApp
         {
             try
             {
-                if (connection.State != ConnectionState.Open) connection.Open();
+                var connection = new SqlConnection(_db.GetConnection()); connection.Open();
 
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
@@ -85,10 +86,10 @@ namespace MPTDotNetCore.ConsoleApp
 
                         foreach (DataRow dr in dt.Rows)
                         {
-                            Console.WriteLine($"Id : {dr[StaticClass.Id]}");
-                            Console.WriteLine($"Title : {dr[StaticClass.Title]}");
-                            Console.WriteLine($"Author : {dr[StaticClass.Author]}");
-                            Console.WriteLine($"Content : {dr[StaticClass.Content]}");
+                            Console.WriteLine($"Id : {dr[StaticModel.Id]}");
+                            Console.WriteLine($"Title : {dr[StaticModel.Title]}");
+                            Console.WriteLine($"Author : {dr[StaticModel.Author]}");
+                            Console.WriteLine($"Content : {dr[StaticModel.Content]}");
                             Console.WriteLine("===============================");
                         }
                     }
@@ -104,13 +105,13 @@ namespace MPTDotNetCore.ConsoleApp
 
         public void Read()
         {
-            ExecuteSql(StaticClass.SelectQuery);
+            ExecuteSql(StaticModel.SelectQuery);
         }
 
         public void Edit()
         {
             int id = ValidateId();
-            ExecuteSql(StaticClass.EditQuery, cmd => cmd.Parameters.AddWithValue("@BlogId", id));
+            ExecuteSql(StaticModel.EditQuery, cmd => cmd.Parameters.AddWithValue("@BlogId", id));
         }
 
         public void Create()
@@ -121,7 +122,7 @@ namespace MPTDotNetCore.ConsoleApp
                 string author = ValidateString("Enter the Blog Author");
                 string content = ValidateString("Enter the Blog Content");
 
-                ExecuteSql(StaticClass.CreateQuery, cmd =>
+                ExecuteSql(StaticModel.CreateQuery, cmd =>
                 {
                     cmd.Parameters.AddWithValue("@BlogTitle", title);
                     cmd.Parameters.AddWithValue("@BlogAuthor", author);
@@ -146,7 +147,7 @@ namespace MPTDotNetCore.ConsoleApp
                 string author = ValidateString("Enter the Blog Author");
                 string content = ValidateString("Enter the Blog Content");
 
-                ExecuteSql(StaticClass.UpdateQuery, cmd =>
+                ExecuteSql(StaticModel.UpdateQuery, cmd =>
                 {
                     cmd.Parameters.AddWithValue("@BlogId", id);
                     cmd.Parameters.AddWithValue("@BlogTitle", title);
@@ -167,7 +168,7 @@ namespace MPTDotNetCore.ConsoleApp
             try
             {
                 int id = ValidateId();
-                ExecuteSql(StaticClass.DeleteQuery, cmd => cmd.Parameters.AddWithValue("@BlogId", id));
+                ExecuteSql(StaticModel.DeleteQuery, cmd => cmd.Parameters.AddWithValue("@BlogId", id));
                 Console.WriteLine("Blog delete successfully.");
                 Console.WriteLine("===============================");
             }
@@ -209,9 +210,9 @@ namespace MPTDotNetCore.ConsoleApp
 
         private bool IdExists(int id)
         {
-            if (connection.State != ConnectionState.Open) connection.Open();
+            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
 
-            using (SqlCommand cmd = new SqlCommand(StaticClass.EditQuery, connection))
+            using (SqlCommand cmd = new SqlCommand(StaticModel.EditQuery, connection))
             {
                 cmd.Parameters.AddWithValue("@BlogId", id);
 

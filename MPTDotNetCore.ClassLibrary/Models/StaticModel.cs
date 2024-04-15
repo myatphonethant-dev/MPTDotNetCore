@@ -1,25 +1,7 @@
-﻿using System.Data.SqlClient;
+﻿namespace MPTDotNetCore.ClassLibrary.Models;
 
-namespace MPTDotNetCore.ConsoleApp;
-
-public class StaticClass
+public static class StaticModel
 {
-    private static SqlConnectionStringBuilder stringBuilder;
-    internal static SqlConnection connection;
-
-    static StaticClass()
-    {
-        stringBuilder = new SqlConnectionStringBuilder()
-        {
-            DataSource = ".",
-            InitialCatalog = "DotNetTrainingBatch4",
-            UserID = "sa",
-            Password = "sa@123",
-        };
-
-        connection = new SqlConnection(stringBuilder.ConnectionString);
-    }
-
     public const string Id = "BlogId";
 
     public const string Title = "BlogTitle";
@@ -27,6 +9,7 @@ public class StaticClass
     public const string Author = "BlogAuthor";
 
     public const string Content = "BlogContent";
+
 
     public static string SelectQuery = @"SELECT * FROM Tbl_Blog";
 
