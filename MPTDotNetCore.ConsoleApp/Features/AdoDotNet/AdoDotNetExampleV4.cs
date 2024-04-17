@@ -4,31 +4,30 @@ using MPTDotNetCore.Shared.Services;
 public class AdoDotNetExampleV4 : IAdoExample
 {
     private readonly AdoService _adoService;
+    private readonly MainLayout _mainLayout;
     private string _connection;
 
-    public AdoDotNetExampleV4(AdoService adoService, string connection)
+    public AdoDotNetExampleV4(AdoService adoService, string connection, MainLayout mainLayout)
     {
         _adoService = adoService;
         _connection = connection;
+        _mainLayout = mainLayout;
     }
 
     public void Read()
     {
         var blogLst = _adoService.GetLst<List<BlogModel>>(SqlQueries.SelectQuery);
 
-        ResultMessage(blogLst);
+        _mainLayout.ResultMessage(blogLst);
     }
 
     public void Edit(int blogId)
     {
-        var blogById = new
-        {
-            BlogId = blogId
-        };
-
+        var blogById = new { BlogId = blogId };
+            
         var blog = _adoService.GetItem<BlogModel>(SqlQueries.EditQuery, blogById.ToDictionary());
 
-        ResultMessage(blog);
+        _mainLayout.ResultMessage(blog);
     }
 
     public void Create(string title, string author, string content)
@@ -42,7 +41,7 @@ public class AdoDotNetExampleV4 : IAdoExample
 
         var result = _adoService.Execute(SqlQueries.CreateQuery, blogCreate.ToDictionary());
 
-        ResultMessage(result, "Create");
+        _mainLayout.ResultMessage(result, "Create");
     }
 
     public void Update(int blogId, string title, string author, string content)
@@ -57,28 +56,15 @@ public class AdoDotNetExampleV4 : IAdoExample
 
         var result = _adoService.Execute(SqlQueries.UpdateQuery, blogUpdate.ToDictionary());
 
-        ResultMessage(result, "Update");
+        _mainLayout.ResultMessage(result, "Update");
     }
 
     public void Delete(int blogId)
     {
-        var blogDelete = new
-        {
-            BlogId = blogId
-        };
+        var blogDelete = new { BlogId = blogId };
 
         var result = _adoService.Execute(SqlQueries.DeleteQuery, blogDelete.ToDictionary());
 
-        ResultMessage(result, "Delete");
-    }
-
-    private void ResultMessage<T>(T result)
-    {
-        Console.WriteLine(result!.ToJson());
-    }
-
-    private void ResultMessage(int result, string operation)
-    {
-        Console.WriteLine(result > 0 ? $"{operation} Successful." : $"{operation} Failed. No rows affected.");
+        _mainLayout.ResultMessage(result, "Delete");
     }
 }

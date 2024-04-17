@@ -151,5 +151,15 @@ namespace MPTDotNetCore.Shared.Services
 
             return input;
         }
+
+        public void ResultMessage<T>(T result)
+        {
+            Console.WriteLine(result!.ToJson());
+        }
+
+        public void ResultMessage(int result, string operation)
+        {
+            Console.WriteLine(result > 0 ? $"{operation} Successful." : $"{operation} Failed. No rows affected.");
+        }
     }
 }
