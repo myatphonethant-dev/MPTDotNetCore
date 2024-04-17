@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MPTDotNetCore.ClassLibrary\MPTDotNetCore.ClassLibrary.csproj" />
+    <ProjectReference Include="..\MPTDotNetCore.ClassLibrary\MPTDotNetCore.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,17 +1,16 @@
-﻿using MPTDotNetCore.ClassLibrary.Models;
-using MPTDotNetCore.ClassLibrary.Services;
+﻿using MPTDotNetCore.Shared.Models;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace MPTDotNetCore.ConsoleApp.AdoDotNet;
+namespace MPTDotNetCore.ConsoleApp.Features.AdoDotNet;
 
 public class AdoDotNetExample
 {
-    private readonly DbService _db;
+    private string _connection;
 
-    public AdoDotNetExample(DbService db)
+    public AdoDotNetExample(string connection)
     {
-        _db = db;
+        _connection = connection;
     }
 
     public void Run()
@@ -66,7 +65,7 @@ public class AdoDotNetExample
     {
         try
         {
-            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
+            var connection = new SqlConnection(_connection); connection.Open();
 
             using (SqlCommand cmd = new SqlCommand(StaticModel.SelectQuery, connection))
             using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
@@ -114,7 +113,7 @@ public class AdoDotNetExample
                 }
             } while (!isValidId);
 
-            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
+            var connection = new SqlConnection(_connection); connection.Open();
 
             using (SqlCommand cmd = new SqlCommand(StaticModel.EditQuery, connection))
             {
@@ -184,7 +183,7 @@ public class AdoDotNetExample
                 }
             } while (string.IsNullOrWhiteSpace(content));
 
-            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
+            var connection = new SqlConnection(_connection); connection.Open();
 
             using (SqlCommand cmd = new SqlCommand(StaticModel.CreateQuery, connection))
             {
@@ -263,7 +262,7 @@ public class AdoDotNetExample
                 }
             } while (string.IsNullOrWhiteSpace(content));
 
-            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
+            var connection = new SqlConnection(_connection); connection.Open();
 
             using (SqlCommand cmd = new SqlCommand(StaticModel.UpdateQuery, connection))
             {
@@ -308,7 +307,7 @@ public class AdoDotNetExample
                 }
             } while (!isValidId);
 
-            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
+            var connection = new SqlConnection(_connection); connection.Open();
 
             using (SqlCommand cmd = new SqlCommand(StaticModel.DeleteQuery, connection))
             {

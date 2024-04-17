@@ -5,7 +5,7 @@ VisualStudioVersion = 17.10.34804.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPTDotNetCore.ConsoleApp", "MPTDotNetCore.ConsoleApp\MPTDotNetCore.ConsoleApp.csproj", "{511EF7EB-0642-475F-A502-EF46B3998D96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTDotNetCore.ClassLibrary", "MPTDotNetCore.ClassLibrary\MPTDotNetCore.ClassLibrary.csproj", "{5A3E50D9-5367-4359-B217-257A28F70B88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPTDotNetCore.Shared", "MPTDotNetCore.ClassLibrary\MPTDotNetCore.Shared.csproj", "{5A3E50D9-5367-4359-B217-257A28F70B88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

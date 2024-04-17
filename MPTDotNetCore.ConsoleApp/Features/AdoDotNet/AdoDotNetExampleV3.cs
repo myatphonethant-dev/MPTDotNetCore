@@ -1,17 +1,16 @@
-﻿using MPTDotNetCore.ClassLibrary.Models;
-using MPTDotNetCore.ClassLibrary.Services;
+﻿using MPTDotNetCore.Shared.Models;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace MPTDotNetCore.ConsoleApp.AdoDotNet
+namespace MPTDotNetCore.ConsoleApp.Features.AdoDotNet
 {
     public class AdoDotNetExampleV3
     {
-        private readonly DbService _db;
+        private string _connection;
 
-        public AdoDotNetExampleV3(DbService db)
+        public AdoDotNetExampleV3(string connection)
         {
-            _db = db;
+            _connection = connection;
         }
 
         public void Run()
@@ -41,7 +40,7 @@ namespace MPTDotNetCore.ConsoleApp.AdoDotNet
 
         private void Read()
         {
-            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
+            var connection = new SqlConnection(_connection); connection.Open();
 
             try
             {
@@ -68,7 +67,7 @@ namespace MPTDotNetCore.ConsoleApp.AdoDotNet
 
             if (id == -1) return;
 
-            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
+            var connection = new SqlConnection(_connection); connection.Open();
 
             try
             {
@@ -114,7 +113,7 @@ namespace MPTDotNetCore.ConsoleApp.AdoDotNet
         {
             BlogModel newBlog = GetBlogDetailsFromUser(new BlogModel());
 
-            var connection = new SqlConnection(_db.GetConnection());
+            var connection = new SqlConnection(_connection); connection.Open();
 
             try
             {
@@ -148,7 +147,7 @@ namespace MPTDotNetCore.ConsoleApp.AdoDotNet
 
             BlogModel updatedBlog = GetBlogDetailsFromUser(existingBlog);
 
-            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
+            var connection = new SqlConnection(_connection); connection.Open();
 
             try
             {
@@ -192,7 +191,7 @@ namespace MPTDotNetCore.ConsoleApp.AdoDotNet
                 Console.WriteLine("Blog not found for the specified ID."); return;
             }
 
-            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
+            var connection = new SqlConnection(_connection); connection.Open();
 
             try
             {
@@ -217,7 +216,7 @@ namespace MPTDotNetCore.ConsoleApp.AdoDotNet
         {
             BlogModel blog = null!;
 
-            var connection = new SqlConnection(_db.GetConnection()); connection.Open();
+            var connection = new SqlConnection(_connection); connection.Open();
 
             try
             {

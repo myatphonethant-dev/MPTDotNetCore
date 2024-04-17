@@ -1,4 +1,4 @@
-﻿namespace MPTDotNetCore.ClassLibrary.Models;
+﻿namespace MPTDotNetCore.Shared.Models;
 
 public class BlogModel
 {
