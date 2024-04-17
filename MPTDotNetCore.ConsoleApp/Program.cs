@@ -2,4 +2,4 @@
 
 AdoDotNet.ExecuteProgram();
 
-Console.ReadKey();
+Console.ReadLine();

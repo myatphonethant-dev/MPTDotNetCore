@@ -5,52 +5,70 @@ namespace MPTDotNetCore.Shared.Services;
 
 public class AdoService
 {
-    private readonly DbService _db;
+    private string _connection;
 
-    public AdoService(DbService db)
+    public AdoService(string connection)
     {
-        _db = db;
+        _connection = connection;
     }
 
     private DataTable Get(string query, Dictionary<string, object>? keyValues = null)
     {
-        DataTable dt = new DataTable();
-        using (var connection = new SqlConnection(_db.GetConnection()))
+        using (var connection = new SqlConnection(_connection))
         {
             connection.Open();
-            SqlCommand cmd = new SqlCommand(query, connection);
-            cmd.CommandType = CommandType.Text;
-            if (keyValues != null)
-                cmd.Parameters.AddRange(keyValues.ToArray());
-            SqlDataAdapter adp = new SqlDataAdapter(cmd);
-            adp.Fill(dt);
-            connection.Close();
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = query;
+                cmd.CommandType = CommandType.Text;
+
+                if (keyValues != null)
+                {
+                    foreach (var kvp in keyValues)
+                    {
+                        cmd.Parameters.AddWithValue(kvp.Key, kvp.Value);
+                    }
+                }
+
+                var dt = new DataTable();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    dt.Load(reader);
+                }
+
+                return dt;
+            }
         }
-        return dt;
     }
 
     private int ExecuteQuery(string query, Dictionary<string, object>? keyValues = null)
     {
-        int result = 0;
-        using (var connection = new SqlConnection(_db.GetConnection()))
+        using (var connection = new SqlConnection(_connection))
         {
             connection.Open();
-            SqlCommand cmd = new SqlCommand(query, connection);
-            cmd.CommandType = CommandType.Text;
-            if (keyValues != null)
-                cmd.Parameters.AddRange(keyValues.ToArray());
-            result = cmd.ExecuteNonQuery();
-            connection.Close();
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = query;
+                cmd.CommandType = CommandType.Text;
+
+                if (keyValues != null)
+                {
+                    foreach (var kvp in keyValues)
+                    {
+                        cmd.Parameters.AddWithValue(kvp.Key, kvp.Value);
+                    }
+                }
+
+                return cmd.ExecuteNonQuery();
+            }
         }
-        return result;
     }
 
     public T GetLst<T>(string query, Dictionary<string, object>? keyValues = null)
     {
         var dt = Get(query, keyValues);
         var jsonStr = dt.ToJson();
-        var jsonObj = jsonStr.ToObject<T>();
-        return jsonObj;
+        return jsonStr.ToObject<T>();
     }
 
     public T GetItem<T>(string query, Dictionary<string, object>? keyValues = null)
@@ -63,7 +81,6 @@ public class AdoService
 
     public int Execute(string query, Dictionary<string, object>? keyValues = null)
     {
-        var result = ExecuteQuery(query, keyValues);
-        return result;
+        return ExecuteQuery(query, keyValues);
     }
 }

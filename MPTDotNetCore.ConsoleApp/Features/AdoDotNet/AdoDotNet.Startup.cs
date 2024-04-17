@@ -6,15 +6,23 @@ public static class AdoDotNet
 {
     public static void ExecuteProgram()
     {
-        DbService dbService = new DbService();
+        DbService dbService = new();
         string connection = dbService.GetConnection();
+        AdoService adoService = new AdoService(connection);
 
-        AdoDotNetExample adoDotNetExample = new AdoDotNetExample(connection);
-        AdoDotNetExampleV2 adoDotNetExampleV2 = new AdoDotNetExampleV2(connection);
-        AdoDotNetExampleV3 adoDotNetExampleV3 = new AdoDotNetExampleV3(connection);
+        AdoDotNetExample adoDotNetExample = new(connection);
+        AdoDotNetExampleV2 adoDotNetExampleV2 = new(connection);
+        AdoDotNetExampleV3 adoDotNetExampleV3 = new(connection);
+        AdoDotNetExampleV4 adoDotNetExampleV4 = new(adoService, connection);
 
-        // adoDotNetExample.Run();
-        // adoDotNetExampleV2.Run();
-        adoDotNetExampleV3.Run();
+        IAdoExample adoExample = adoDotNetExampleV4;
+
+        //adoDotNetExample.Run();
+        //adoDotNetExampleV2.Run();
+        //adoDotNetExampleV3.Run();
+
+        MainLayout mainLayout = new MainLayout(adoExample);
+
+        mainLayout.Run();
     }
 }
