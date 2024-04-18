@@ -3,22 +3,24 @@ using MPTDotNetCore.Shared.Services;
 
 public class AdoDotNetExampleV4 : IAdoExample
 {
+    #region Constructor
+
     private readonly AdoService _adoService;
-    private readonly MainLayout _mainLayout;
     private string _connection;
 
-    public AdoDotNetExampleV4(AdoService adoService, string connection, MainLayout mainLayout)
+    public AdoDotNetExampleV4(AdoService adoService, string connection)
     {
         _adoService = adoService;
         _connection = connection;
-        _mainLayout = mainLayout;
     }
+
+    #endregion
 
     public void Read()
     {
         var blogLst = _adoService.GetLst<List<BlogModel>>(SqlQueries.SelectQuery);
 
-        _mainLayout.ResultMessage(blogLst);
+        _adoService.ResultMessage(blogLst);
     }
 
     public void Edit(int blogId)
@@ -27,7 +29,7 @@ public class AdoDotNetExampleV4 : IAdoExample
             
         var blog = _adoService.GetItem<BlogModel>(SqlQueries.EditQuery, blogById.ToDictionary());
 
-        _mainLayout.ResultMessage(blog);
+        _adoService.ResultMessage(blog);
     }
 
     public void Create(string title, string author, string content)
@@ -41,7 +43,7 @@ public class AdoDotNetExampleV4 : IAdoExample
 
         var result = _adoService.Execute(SqlQueries.CreateQuery, blogCreate.ToDictionary());
 
-        _mainLayout.ResultMessage(result, "Create");
+        _adoService.ResultMessage(result, "Create");
     }
 
     public void Update(int blogId, string title, string author, string content)
@@ -56,7 +58,7 @@ public class AdoDotNetExampleV4 : IAdoExample
 
         var result = _adoService.Execute(SqlQueries.UpdateQuery, blogUpdate.ToDictionary());
 
-        _mainLayout.ResultMessage(result, "Update");
+        _adoService.ResultMessage(result, "Update");
     }
 
     public void Delete(int blogId)
@@ -65,6 +67,6 @@ public class AdoDotNetExampleV4 : IAdoExample
 
         var result = _adoService.Execute(SqlQueries.DeleteQuery, blogDelete.ToDictionary());
 
-        _mainLayout.ResultMessage(result, "Delete");
+        _adoService.ResultMessage(result, "Delete");
     }
 }

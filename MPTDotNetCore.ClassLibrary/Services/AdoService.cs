@@ -5,12 +5,18 @@ namespace MPTDotNetCore.Shared.Services;
 
 public class AdoService
 {
+    #region Constructor
+
     private string _connection;
 
     public AdoService(string connection)
     {
         _connection = connection;
     }
+
+    #endregion
+
+    #region Get Methods
 
     private DataTable Get(string query, Dictionary<string, object>? keyValues = null)
     {
@@ -41,6 +47,25 @@ public class AdoService
         }
     }
 
+    public T GetLst<T>(string query, Dictionary<string, object>? keyValues = null)
+    {
+        var dt = Get(query, keyValues);
+        var jsonStr = dt.ToJson();
+        return jsonStr.ToObject<T>();
+    }
+
+    public T GetItem<T>(string query, Dictionary<string, object>? keyValues = null)
+    {
+        var dt = Get(query, keyValues);
+        var jsonStr = dt.ToJson();
+        var jsonObj = jsonStr.ToObject<List<T>>();
+        return jsonObj.FirstOrDefault()!;
+    }
+
+    #endregion
+
+    #region Execute Queries
+
     private int ExecuteQuery(string query, Dictionary<string, object>? keyValues = null)
     {
         using (var connection = new SqlConnection(_connection))
@@ -64,23 +89,24 @@ public class AdoService
         }
     }
 
-    public T GetLst<T>(string query, Dictionary<string, object>? keyValues = null)
-    {
-        var dt = Get(query, keyValues);
-        var jsonStr = dt.ToJson();
-        return jsonStr.ToObject<T>();
-    }
-
-    public T GetItem<T>(string query, Dictionary<string, object>? keyValues = null)
-    {
-        var dt = Get(query, keyValues);
-        var jsonStr = dt.ToJson();
-        var jsonObj = jsonStr.ToObject<List<T>>();
-        return jsonObj.FirstOrDefault()!;
-    }
-
     public int Execute(string query, Dictionary<string, object>? keyValues = null)
     {
         return ExecuteQuery(query, keyValues);
     }
+
+    #endregion
+
+    #region Result Message
+
+    public void ResultMessage<T>(T result)
+    {
+        Console.WriteLine(result!.ToJson());
+    }
+
+    public void ResultMessage(int result, string operation)
+    {
+        Console.WriteLine(result > 0 ? $"{operation} Successful." : $"{operation} Failed. No rows affected.");
+    }
+
+    #endregion
 }

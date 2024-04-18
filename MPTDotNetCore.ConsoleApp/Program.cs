@@ -1,5 +1,5 @@
 ﻿using MPTDotNetCore.ConsoleApp.Features.AdoDotNet;
 
-AdoDotNet.ExecuteProgram();
+AdoDotNet.ExecuteAdoDotNet();
 
 Console.ReadLine();

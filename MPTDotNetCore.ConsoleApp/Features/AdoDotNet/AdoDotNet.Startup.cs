@@ -4,7 +4,9 @@ namespace MPTDotNetCore.ConsoleApp.Features.AdoDotNet;
 
 public static class AdoDotNet
 {
-    public static void ExecuteProgram()
+    #region Static Startup (Program.cs )
+
+    public static void ExecuteAdoDotNet()
     {
         DbService dbService = new();
         string connection = dbService.GetConnection();
@@ -25,4 +27,6 @@ public static class AdoDotNet
 
         mainLayout.Run();
     }
+
+    #endregion
 }

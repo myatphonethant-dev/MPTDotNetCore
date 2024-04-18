@@ -4,6 +4,8 @@ namespace MPTDotNetCore.Shared.Services;
 
 public class DbService
 {
+    #region Connection String
+
     public string GetConnection()
     {
         var connection = new SqlConnectionStringBuilder()
@@ -17,4 +19,6 @@ public class DbService
 
         return connection.ConnectionString;
     }
+
+    #endregion
 }

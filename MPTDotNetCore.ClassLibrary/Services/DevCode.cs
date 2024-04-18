@@ -4,6 +4,8 @@ namespace MPTDotNetCore.Shared.Services;
 
 public static class DevCode
 {
+    #region To Dictionary
+
     public static Dictionary<string, object> ToDictionary<T>(this T obj)
     {
         var keyValue = new Dictionary<string, object>();
@@ -16,10 +18,18 @@ public static class DevCode
         return keyValue;
     }
 
+    #endregion
+
+    #region To Json
+
     public static string ToJson(this object obj)
     {
         return JsonConvert.SerializeObject(obj);
     }
+
+    #endregion
+
+    #region To Object
 
     public static T ToObject<T>(this string str)
     {
@@ -30,4 +40,6 @@ public static class DevCode
     {
         return JsonConvert.DeserializeObject<List<T>>(str)!;
     }
+
+    #endregion
 }
