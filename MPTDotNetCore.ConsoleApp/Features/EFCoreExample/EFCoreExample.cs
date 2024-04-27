@@ -1,12 +1,17 @@
-﻿namespace MPTDotNetCore.ConsoleApp.Features.EFCoreExample;
+﻿using MPTDotNetCore.Shared.DbServices;
+using MPTDotNetCore.Shared.Models;
+using System.Data.SqlClient;
+using System.Data;
+
+namespace MPTDotNetCore.ConsoleApp.Features.EFCoreExample;
 
 public class EFCoreExample
 {
-    private string _connection;
+    private readonly AppDbContext _db;
 
-    public EFCoreExample(string connection)
+    public EFCoreExample(AppDbContext db)
     {
-        _connection = connection;
+        _db = db;
     }
 
     public void Run()
@@ -59,26 +64,238 @@ public class EFCoreExample
 
     public void Read()
     {
+        try
+        {
+            var lst = _db.TblBlogs.ToList();
 
+            foreach (BlogModel item in lst)
+            {
+                Console.WriteLine($"Id : {item.BlogId}");
+                Console.WriteLine($"Title : {item.BlogTitle}");
+                Console.WriteLine($"Author : {item.BlogAuthor}");
+                Console.WriteLine($"Content : {item.BlogContent}");
+                Console.WriteLine("===============================");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
 
     public void Edit()
     {
+        try
+        {
+            int id;
+            bool isValidId = false;
 
+            do
+            {
+                Console.Write("Enter the Blog Id : ");
+                string idInput = Console.ReadLine()!;
+
+                if (int.TryParse(idInput, out id))
+                {
+                    isValidId = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input! Please enter a valid integer.");
+                }
+            } while (!isValidId);
+
+            var item = _db.TblBlogs.FirstOrDefault(x => x.BlogId == id);
+
+            if (item is null)
+            {
+                Console.WriteLine("No Data Found!");
+                return;
+            }
+
+            Console.WriteLine($"Id : {item!.BlogId}");
+            Console.WriteLine($"Title : {item.BlogTitle}");
+            Console.WriteLine($"Author : {item.BlogAuthor}");
+            Console.WriteLine($"Content : {item.BlogContent}");
+            Console.WriteLine("===============================");
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
 
     public void Create()
     {
+        try
+        {
+            string title;
+            string author;
+            string content;
+            do
+            {
+                Console.Write("Enter the Blog Title : ");
+                title = Console.ReadLine()!;
 
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    Console.WriteLine("Value must not be null or whitespace! Please try again.");
+                }
+            } while (string.IsNullOrWhiteSpace(title));
+
+            do
+            {
+                Console.Write("Enter the Blog Author : ");
+                author = Console.ReadLine()!;
+
+                if (string.IsNullOrWhiteSpace(author))
+                {
+                    Console.WriteLine("Value must not be null or whitespace! Please try again.");
+                }
+            } while (string.IsNullOrWhiteSpace(author));
+
+            do
+            {
+                Console.Write("Enter the Blog Content : ");
+                content = Console.ReadLine()!;
+
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    Console.WriteLine("Value must not be null or whitespace! Please try again.");
+                }
+            } while (string.IsNullOrWhiteSpace(content));
+
+            var item = new BlogModel
+            {
+                BlogTitle = title,
+                BlogAuthor = author,
+                BlogContent = content
+            };
+
+            _db.TblBlogs.Add(item);
+            int result = _db.SaveChanges();
+
+            string message = result > 0 ? "Saving Successful." : "Saving Failed.";
+            Console.WriteLine(message);
+            Console.WriteLine("===============================");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
 
     public void Update()
     {
+        try
+        {
+            int id;
+            string title;
+            string author;
+            string content;
+            bool isValidId = false;
 
+            do
+            {
+                Console.Write("Enter the Blog Id : ");
+                string idInput = Console.ReadLine()!;
+
+                if (int.TryParse(idInput, out id))
+                {
+                    isValidId = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input! Please enter a valid integer.");
+                }
+            } while (!isValidId);
+
+            do
+            {
+                Console.Write("Enter the Blog Title : ");
+                title = Console.ReadLine()!;
+
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    Console.WriteLine("Value must not be null or whitespace! Please try again.");
+                }
+            } while (string.IsNullOrWhiteSpace(title));
+
+            do
+            {
+                Console.Write("Enter the Blog Author : ");
+                author = Console.ReadLine()!;
+
+                if (string.IsNullOrWhiteSpace(author))
+                {
+                    Console.WriteLine("Value must not be null or whitespace! Please try again.");
+                }
+            } while (string.IsNullOrWhiteSpace(author));
+
+            do
+            {
+                Console.Write("Enter the Blog Content : ");
+                content = Console.ReadLine()!;
+
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    Console.WriteLine("Value must not be null or whitespace! Please try again.");
+                }
+            } while (string.IsNullOrWhiteSpace(content));
+
+            var blog = _db.TblBlogs.FirstOrDefault(x => x.BlogId == id);
+
+            blog!.BlogTitle = title;
+            blog.BlogAuthor = author;
+            blog.BlogContent = content;
+
+            int result = _db.SaveChanges();
+
+            string message = result > 0 ? "Updating Successful." : "Updating Failed.";
+            Console.WriteLine(message);
+            Console.WriteLine("===============================");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
 
     public void Delete()
     {
+        try
+        {
+            int id;
+            bool isValidId = false;
 
+            do
+            {
+                Console.Write("Enter the Blog Id : ");
+                string idInput = Console.ReadLine()!;
+
+                if (int.TryParse(idInput, out id))
+                {
+                    isValidId = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input! Please enter a valid integer.");
+                }
+            } while (!isValidId);
+
+            var item = _db.TblBlogs.FirstOrDefault(x => x.BlogId == id);
+
+            _db.TblBlogs.Remove(item!);
+            int result = _db.SaveChanges();
+
+            string message = result > 0 ? "Deleting Successful." : "Deleting Failed.";
+            Console.WriteLine(message);
+            Console.WriteLine("===============================");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
 }

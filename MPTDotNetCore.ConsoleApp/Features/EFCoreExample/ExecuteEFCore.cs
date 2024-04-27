@@ -8,10 +8,10 @@ public static class ExecuteEFCore
 
     public static void Execute()
     {
-        DbService dbService = new();
-        string connection = dbService.GetConnection();
+        DbService connectionString = new();
+        AppDbContext _dbService = new AppDbContext(connectionString);
 
-        EFCoreExample efCoreExample = new EFCoreExample(connection);
+        EFCoreExample efCoreExample = new EFCoreExample(_dbService);
 
         efCoreExample.Run();
     }
