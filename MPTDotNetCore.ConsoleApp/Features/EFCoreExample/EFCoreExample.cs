@@ -2,6 +2,7 @@
 using MPTDotNetCore.Shared.Models;
 using System.Data.SqlClient;
 using System.Data;
+using System.Reflection.Metadata;
 
 namespace MPTDotNetCore.ConsoleApp.Features.EFCoreExample;
 
@@ -110,6 +111,7 @@ public class EFCoreExample
             if (item is null)
             {
                 Console.WriteLine("No Data Found!");
+                Console.WriteLine("===============================");
                 return;
             }
 
@@ -211,6 +213,15 @@ public class EFCoreExample
                 }
             } while (!isValidId);
 
+            var blog = _db.TblBlogs.FirstOrDefault(x => x.BlogId == id);
+
+            if (blog is null)
+            {
+                Console.WriteLine("No Data Found!");
+                Console.WriteLine("===============================");
+                return;
+            }
+
             do
             {
                 Console.Write("Enter the Blog Title : ");
@@ -243,8 +254,6 @@ public class EFCoreExample
                     Console.WriteLine("Value must not be null or whitespace! Please try again.");
                 }
             } while (string.IsNullOrWhiteSpace(content));
-
-            var blog = _db.TblBlogs.FirstOrDefault(x => x.BlogId == id);
 
             blog!.BlogTitle = title;
             blog.BlogAuthor = author;
@@ -285,6 +294,13 @@ public class EFCoreExample
             } while (!isValidId);
 
             var item = _db.TblBlogs.FirstOrDefault(x => x.BlogId == id);
+
+            if (item is null)
+            {
+                Console.WriteLine("No Data Found!");
+                Console.WriteLine("===============================");
+                return;
+            }
 
             _db.TblBlogs.Remove(item!);
             int result = _db.SaveChanges();

@@ -12,8 +12,10 @@ public static class ExecuteEFCore
         AppDbContext _dbService = new AppDbContext(connectionString);
 
         EFCoreExample efCoreExample = new EFCoreExample(_dbService);
+        EFCoreExampleV2 efCoreExampleV2 = new EFCoreExampleV2(_dbService);
 
-        efCoreExample.Run();
+        //efCoreExample.Run();
+        efCoreExampleV2.Run();
     }
 
     #endregion
