@@ -11,9 +11,10 @@ public static class ExecuteDapper
         DbService dbService = new();
         string connection = dbService.GetConnection();
 
-        DapperExample dapperExample = new DapperExample(connection);
+        //DapperExample dapperExample = new DapperExample(connection);
+        DapperExampleV2 dapperExampleV2 = new DapperExampleV2(connection);
 
-        dapperExample.Run();
+        dapperExampleV2.Run();
     }
 
     #endregion
