@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 
-namespace MPTDotNetCore.ConsoleApp.Features.AdoDotNet;
+namespace MPTDotNetCore.ConsoleApp.Features.AdoDotNetExample;
 
 public class AdoDotNetExample
 {

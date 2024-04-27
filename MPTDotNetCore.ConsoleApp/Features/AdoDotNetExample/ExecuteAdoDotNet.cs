@@ -1,6 +1,6 @@
 ﻿using MPTDotNetCore.Shared.Services;
 
-namespace MPTDotNetCore.ConsoleApp.Features.AdoDotNet;
+namespace MPTDotNetCore.ConsoleApp.Features.AdoDotNetExample;
 
 public static class ExecuteAdoDotNet
 {

@@ -1,6 +1,8 @@
 ﻿using MPTDotNetCore.Shared.Models;
 using MPTDotNetCore.Shared.Services;
 
+namespace MPTDotNetCore.ConsoleApp.Features.AdoDotNetExample;
+
 public class AdoDotNetExampleV4 : IBaseExample
 {
     #region Constructor

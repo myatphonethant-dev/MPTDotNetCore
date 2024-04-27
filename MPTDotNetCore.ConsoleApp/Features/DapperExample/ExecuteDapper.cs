@@ -1,4 +1,5 @@
-﻿using MPTDotNetCore.Shared.Services;
+﻿using MPTDotNetCore.Shared.Models;
+using MPTDotNetCore.Shared.Services;
 
 namespace MPTDotNetCore.ConsoleApp.Features.DapperExample;
 
@@ -10,11 +11,20 @@ public static class ExecuteDapper
     {
         DbService dbService = new();
         string connection = dbService.GetConnection();
+        DapperService<BlogModel> dapperService = new DapperService<BlogModel>(connection);
 
-        //DapperExample dapperExample = new DapperExample(connection);
+        DapperExample dapperExample = new DapperExample(connection);
         DapperExampleV2 dapperExampleV2 = new DapperExampleV2(connection);
+        DapperExampleV3 dapperExampleV3 = new DapperExampleV3(dapperService, connection);
 
-        dapperExampleV2.Run();
+        //dapperExample.Run();
+        //dapperExampleV2.Run();
+
+        IBaseExample adoExample = dapperExampleV3;
+
+        MainLayout mainLayout = new MainLayout(adoExample);
+
+        mainLayout.Run();
     }
 
     #endregion

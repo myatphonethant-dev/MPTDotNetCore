@@ -52,21 +52,28 @@ public class DapperService<TModel> where TModel : class
 
     #region Generate Data
 
-    public void DataList(IEnumerable<BlogModel> items)
+    public void DataList(IEnumerable<TModel> items)
     {
         if (items == null) return;
 
-        foreach (var item in items) DataList(items);
+        foreach (var item in items)
+        {
+            DataList(item);
+            Console.WriteLine("===============================");
+        }
     }
 
-    public void DataList(BlogModel item)
+    public void DataList(TModel item)
     {
         if (item == null) return;
 
-        Console.WriteLine($"Id: {item.BlogId}");
-        Console.WriteLine($"Title: {item.BlogTitle}");
-        Console.WriteLine($"Author: {item.BlogAuthor}");
-        Console.WriteLine($"Content: {item.BlogContent}");
+        if (item is BlogModel blog)
+        {
+            Console.WriteLine($"Id: {blog.BlogId}");
+            Console.WriteLine($"Title: {blog.BlogTitle}");
+            Console.WriteLine($"Author: {blog.BlogAuthor}");
+            Console.WriteLine($"Content: {blog.BlogContent}");
+        }
     }
 
     #endregion
