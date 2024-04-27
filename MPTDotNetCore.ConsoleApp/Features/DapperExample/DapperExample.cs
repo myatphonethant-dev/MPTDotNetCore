@@ -1,21 +1,18 @@
-﻿using MPTDotNetCore.Shared.Models;
+﻿using Dapper;
+using MPTDotNetCore.Shared.Models;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace MPTDotNetCore.ConsoleApp.Features.AdoDotNet;
+namespace MPTDotNetCore.ConsoleApp.Features.DapperExample;
 
-public class AdoDotNetExample
+public class DapperExample
 {
-    #region Constructor
-
     private string _connection;
 
-    public AdoDotNetExample(string connection)
+    public DapperExample(string connection)
     {
         _connection = connection;
     }
-
-    #endregion
 
     public void Run()
     {
@@ -67,31 +64,16 @@ public class AdoDotNetExample
 
     public void Read()
     {
-        try
+        using IDbConnection _db = new SqlConnection(_connection);
+        List<BlogModel> lst = _db.Query<BlogModel>(SqlQueries.SelectQuery).ToList();
+
+        foreach (BlogModel item in lst)
         {
-            var connection = new SqlConnection(_connection); connection.Open();
-
-            using (SqlCommand cmd = new SqlCommand(StaticModel.SelectQuery, connection))
-            using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-            {
-                DataTable dt = new DataTable();
-                adapter.Fill(dt);
-
-                foreach (DataRow dr in dt.Rows)
-                {
-                    Console.WriteLine($"Id : {dr[StaticModel.Id]}");
-                    Console.WriteLine($"Title : {dr[StaticModel.Title]}");
-                    Console.WriteLine($"Author : {dr[StaticModel.Author]}");
-                    Console.WriteLine($"Content : {dr[StaticModel.Content]}");
-                    Console.WriteLine("===============================");
-                }
-            }
-
-            connection.Close();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred: {ex.Message}");
+            Console.WriteLine($"Id : {item.BlogId}");
+            Console.WriteLine($"Title : {item.BlogTitle}");
+            Console.WriteLine($"Author : {item.BlogAuthor}");
+            Console.WriteLine($"Content : {item.BlogContent}");
+            Console.WriteLine("===============================");
         }
     }
 
@@ -117,29 +99,20 @@ public class AdoDotNetExample
                 }
             } while (!isValidId);
 
-            var connection = new SqlConnection(_connection); connection.Open();
+            using IDbConnection _db = new SqlConnection(_connection);
+            var item = _db.Query<BlogModel>(SqlQueries.EditQuery, new BlogModel { BlogId = id }).FirstOrDefault();
 
-            using (SqlCommand cmd = new SqlCommand(StaticModel.EditQuery, connection))
+            if (item is null)
             {
-                cmd.Parameters.AddWithValue("@BlogId", id);
-                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                {
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
-                    if (dt.Rows.Count == 0)
-                    {
-                        Console.WriteLine("No data found.");
-                        return;
-                    }
-                    DataRow dr = dt.Rows[0];
-                    Console.WriteLine($"Title: {dr["BlogTitle"]}");
-                    Console.WriteLine($"Author: {dr["BlogAuthor"]}");
-                    Console.WriteLine($"Content: {dr["BlogContent"]}");
-                    Console.WriteLine("===============================");
-                }
+                Console.WriteLine("No Data Found!");
+                return;
             }
 
-            connection.Close(); 
+            Console.WriteLine($"Id : {item.BlogId}");
+            Console.WriteLine($"Title : {item.BlogTitle}");
+            Console.WriteLine($"Author : {item.BlogAuthor}");
+            Console.WriteLine($"Content : {item.BlogContent}");
+            Console.WriteLine("===============================");
         }
         catch (Exception ex)
         {
@@ -187,20 +160,19 @@ public class AdoDotNetExample
                 }
             } while (string.IsNullOrWhiteSpace(content));
 
-            var connection = new SqlConnection(_connection); connection.Open();
-
-            using (SqlCommand cmd = new SqlCommand(StaticModel.CreateQuery, connection))
+            var item = new BlogModel
             {
-                cmd.Parameters.AddWithValue("@BlogTitle", title);
-                cmd.Parameters.AddWithValue("@BlogAuthor", author);
-                cmd.Parameters.AddWithValue("@BlogContent", content);
-                int result = cmd.ExecuteNonQuery();
-                string message = result > 0 ? "Saving Successful." : "Saving Failed.";
-                Console.WriteLine(message);
-                Console.WriteLine("===============================");
-            }
+                BlogTitle = title,
+                BlogAuthor = author,
+                BlogContent = content
+            };
 
-            connection.Close();
+            using IDbConnection _db = new SqlConnection(_connection);
+            int result = _db.Execute(SqlQueries.CreateQuery, item);
+
+            string message = result > 0 ? "Saving Successful." : "Saving Failed.";
+            Console.WriteLine(message);
+            Console.WriteLine("===============================");
         }
         catch (Exception ex)
         {
@@ -266,22 +238,20 @@ public class AdoDotNetExample
                 }
             } while (string.IsNullOrWhiteSpace(content));
 
-            var connection = new SqlConnection(_connection); connection.Open();
-
-            using (SqlCommand cmd = new SqlCommand(StaticModel.UpdateQuery, connection))
+            var item = new BlogModel
             {
-                cmd.Parameters.AddWithValue("@BlogId", id);
-                cmd.Parameters.AddWithValue("@BlogTitle", title);
-                cmd.Parameters.AddWithValue("@BlogAuthor", author);
-                cmd.Parameters.AddWithValue("@BlogContent", content);
-                Console.WriteLine("===============================");
-                int result = cmd.ExecuteNonQuery();
-                string message = result > 0 ? "Update Successful." : "Update Failed.";
-                Console.WriteLine(message);
-                Console.WriteLine("===============================");
-            }
+                BlogId = id,
+                BlogTitle = title,
+                BlogAuthor = author,
+                BlogContent = content
+            };
 
-            connection.Close();
+            using IDbConnection _db = new SqlConnection(_connection);
+            int result = _db.Execute(SqlQueries.UpdateQuery, item);
+
+            string message = result > 0 ? "Updating Successful." : "Updating Failed.";
+            Console.WriteLine(message);
+            Console.WriteLine("===============================");
         }
         catch (Exception ex)
         {
@@ -311,18 +281,12 @@ public class AdoDotNetExample
                 }
             } while (!isValidId);
 
-            var connection = new SqlConnection(_connection); connection.Open();
+            using IDbConnection _db = new SqlConnection(_connection);
+            int result = _db.Execute(SqlQueries.DeleteQuery, new BlogModel { BlogId = id });
 
-            using (SqlCommand cmd = new SqlCommand(StaticModel.DeleteQuery, connection))
-            {
-                cmd.Parameters.AddWithValue("@BlogId", id);
-                int result = cmd.ExecuteNonQuery();
-                string message = result > 0 ? "Deleting Successful." : "Deleting Failed.";
-                Console.WriteLine(message);
-                Console.WriteLine("===============================");
-            }
-
-            connection.Close();
+            string message = result > 0 ? "Deleting Successful." : "Deleting Failed.";
+            Console.WriteLine(message);
+            Console.WriteLine("===============================");
         }
         catch (Exception ex)
         {

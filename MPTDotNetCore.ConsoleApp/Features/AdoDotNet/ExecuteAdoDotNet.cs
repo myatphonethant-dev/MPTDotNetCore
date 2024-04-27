@@ -2,11 +2,11 @@
 
 namespace MPTDotNetCore.ConsoleApp.Features.AdoDotNet;
 
-public static class AdoDotNet
+public static class ExecuteAdoDotNet
 {
     #region Static Startup (Program.cs )
 
-    public static void ExecuteAdoDotNet()
+    public static void Execute()
     {
         DbService dbService = new();
         string connection = dbService.GetConnection();

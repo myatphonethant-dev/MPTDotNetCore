@@ -1,5 +1,7 @@
 ﻿using MPTDotNetCore.ConsoleApp.Features.AdoDotNet;
+using MPTDotNetCore.ConsoleApp.Features.DapperExample;
 
-AdoDotNet.ExecuteAdoDotNet();
+//ExecuteAdoDotNet.Execute();
+ExecuteDapper.Execute();
 
 Console.ReadLine();
