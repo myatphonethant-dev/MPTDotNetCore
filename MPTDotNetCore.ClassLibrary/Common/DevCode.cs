@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace MPTDotNetCore.Shared.Services;
+namespace MPTDotNetCore.Shared.Common;
 
 public static class DevCode
 {

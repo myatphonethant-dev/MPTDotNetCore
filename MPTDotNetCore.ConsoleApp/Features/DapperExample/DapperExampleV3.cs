@@ -1,4 +1,5 @@
-﻿using MPTDotNetCore.Shared.Models;
+﻿using MPTDotNetCore.Shared.Common;
+using MPTDotNetCore.Shared.Models;
 using MPTDotNetCore.Shared.Services;
 
 namespace MPTDotNetCore.ConsoleApp.Features.DapperExample;

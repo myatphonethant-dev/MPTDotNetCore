@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace MPTDotNetCore.Shared.Services;
+namespace MPTDotNetCore.Shared.DbServices;
 
 public class DbService
 {

@@ -1,4 +1,4 @@
-﻿using MPTDotNetCore.Shared.Services;
+﻿using MPTDotNetCore.Shared.DbServices;
 
 namespace MPTDotNetCore.ConsoleApp.Features.EFCoreExample;
 

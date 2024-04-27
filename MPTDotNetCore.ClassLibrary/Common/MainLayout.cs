@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace MPTDotNetCore.Shared.Services;
+namespace MPTDotNetCore.Shared.Common;
 
 #region Common Interface
 
