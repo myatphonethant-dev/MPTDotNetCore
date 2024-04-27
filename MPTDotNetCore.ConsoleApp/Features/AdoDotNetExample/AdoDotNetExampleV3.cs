@@ -6,12 +6,16 @@ namespace MPTDotNetCore.ConsoleApp.Features.AdoDotNetExample;
 
 public class AdoDotNetExampleV3
 {
+    #region Constructor
+
     private string _connection;
 
     public AdoDotNetExampleV3(string connection)
     {
         _connection = connection;
     }
+
+    #endregion
 
     public void Run()
     {

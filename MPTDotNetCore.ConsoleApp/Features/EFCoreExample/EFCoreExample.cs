@@ -1,19 +1,20 @@
 ﻿using MPTDotNetCore.Shared.DbServices;
 using MPTDotNetCore.Shared.Models;
-using System.Data.SqlClient;
-using System.Data;
-using System.Reflection.Metadata;
 
 namespace MPTDotNetCore.ConsoleApp.Features.EFCoreExample;
 
 public class EFCoreExample
 {
+    #region Constructor
+
     private readonly AppDbContext _db;
 
     public EFCoreExample(AppDbContext db)
     {
         _db = db;
     }
+
+    #endregion
 
     public void Run()
     {

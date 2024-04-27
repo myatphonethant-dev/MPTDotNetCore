@@ -7,12 +7,16 @@ namespace MPTDotNetCore.ConsoleApp.Features.DapperExample;
 
 public class DapperExample
 {
+    #region Constructor
+
     private string _connection;
 
     public DapperExample(string connection)
     {
         _connection = connection;
     }
+
+    #endregion
 
     public void Run()
     {

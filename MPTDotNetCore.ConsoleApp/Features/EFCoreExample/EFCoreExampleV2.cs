@@ -7,12 +7,16 @@ namespace MPTDotNetCore.ConsoleApp.Features.EFCoreExample;
 
 public class EFCoreExampleV2
 {
+    #region Constructor
+
     private readonly AppDbContext _db;
 
     public EFCoreExampleV2(AppDbContext db)
     {
         _db = db;
     }
+
+    #endregion
 
     public void Run()
     {
