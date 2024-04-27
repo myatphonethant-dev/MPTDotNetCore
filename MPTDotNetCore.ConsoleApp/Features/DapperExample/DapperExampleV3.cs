@@ -1,16 +1,18 @@
 ﻿using MPTDotNetCore.Shared.Models;
 using MPTDotNetCore.Shared.Services;
 
-public class AdoDotNetExampleV4 : IBaseExample
+namespace MPTDotNetCore.ConsoleApp.Features.DapperExample;
+
+public class DapperExampleV3 : IBaseExample 
 {
     #region Constructor
 
-    private readonly AdoService _adoService;
+    private readonly DapperService<BlogModel> _dapperService;
     private string _connection;
 
-    public AdoDotNetExampleV4(AdoService adoService, string connection)
+    public DapperExampleV3(DapperService<BlogModel> dapperService, string connection)
     {
-        _adoService = adoService;
+        _dapperService = dapperService;
         _connection = connection;
     }
 
@@ -18,18 +20,18 @@ public class AdoDotNetExampleV4 : IBaseExample
 
     public void Read()
     {
-        var blogLst = _adoService.GetLst<List<BlogModel>>(SqlQueries.SelectQuery);
+        var lst = _dapperService.Query(SqlQueries.SelectQuery);
 
-        _adoService.ResultMessage(blogLst);
+        _dapperService.DataList(lst);
     }
 
     public void Edit(int blogId)
     {
         var blogById = new { BlogId = blogId };
-            
-        var blog = _adoService.GetItem<BlogModel>(SqlQueries.EditQuery, blogById.ToDictionary());
 
-        _adoService.ResultMessage(blog);
+        var item = _dapperService.QuerySingle(SqlQueries.EditQuery, blogById);
+
+        _dapperService.DataList(item);
     }
 
     public void Create(string title, string author, string content)
@@ -41,9 +43,7 @@ public class AdoDotNetExampleV4 : IBaseExample
             BlogContent = content,
         };
 
-        var result = _adoService.Execute(SqlQueries.CreateQuery, blogCreate.ToDictionary());
-
-        _adoService.ResultMessage(result, "Create");
+        _dapperService.Execute(SqlQueries.CreateQuery, "Creating", blogCreate);
     }
 
     public void Update(int blogId, string title, string author, string content)
@@ -56,17 +56,13 @@ public class AdoDotNetExampleV4 : IBaseExample
             BlogContent = content,
         };
 
-        var result = _adoService.Execute(SqlQueries.UpdateQuery, blogUpdate.ToDictionary());
-
-        _adoService.ResultMessage(result, "Update");
+        _dapperService.Execute(SqlQueries.UpdateQuery, "Updating", blogUpdate);
     }
 
     public void Delete(int blogId)
     {
         var blogDelete = new { BlogId = blogId };
 
-        var result = _adoService.Execute(SqlQueries.DeleteQuery, blogDelete.ToDictionary());
-
-        _adoService.ResultMessage(result, "Delete");
+        _dapperService.Execute(SqlQueries.DeleteQuery, "Deleting", blogDelete);
     }
 }

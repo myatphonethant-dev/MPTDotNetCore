@@ -2,15 +2,15 @@
 
 namespace MPTDotNetCore.Shared.Services;
 
-#region AdoDotNetExample Interface
+#region Common Interface
 
-public interface IAdoExample
+public interface IBaseExample
 {
-    void Read();
-    void Edit(int blogId);
-    void Create(string title, string author, string content);
-    void Update(int blogId, string title, string author, string content);
-    void Delete(int blogId);
+    public void Read();
+    public void Edit(int id);
+    public void Create(string title, string author, string content);
+    public void Update(int id, string title, string author, string content);
+    public void Delete(int id);
 }
 
 #endregion
@@ -19,13 +19,12 @@ public class MainLayout
 {
     #region Constructor
 
-    private readonly IAdoExample _adoExample;
+    private readonly IBaseExample _example;
 
-    public MainLayout(IAdoExample adoExample)
+    public MainLayout(IBaseExample example)
     {
-        _adoExample = adoExample;
+        _example = example;
     }
-
 
     #endregion
 
@@ -84,7 +83,7 @@ public class MainLayout
         }
         else if (!string.IsNullOrEmpty(methodName))
         {
-            MethodInfo method = typeof(IAdoExample).GetMethod(methodName)!;
+            MethodInfo method = typeof(IBaseExample).GetMethod(methodName)!;
 
             if (method != null)
             {
@@ -92,7 +91,7 @@ public class MainLayout
                 {
                     if (methodName == "Read")
                     {
-                        method.Invoke(_adoExample, null);
+                        method.Invoke(_example, null);
                     }
                     else if (methodName == "Edit" || methodName == "Update" || methodName == "Delete")
                     {
@@ -100,14 +99,14 @@ public class MainLayout
 
                         if (methodName == "Edit" || methodName == "Delete")
                         {
-                            method.Invoke(_adoExample, new object[] { id });
+                            method.Invoke(_example, new object[] { id });
                         }
                         else if (methodName == "Update")
                         {
                             string title = GetUserInput("Enter BlogTitle: ");
                             string author = GetUserInput("Enter BlogAuthor: ");
                             string content = GetUserInput("Enter BlogContent: ");
-                            method.Invoke(_adoExample, new object[] { id, title, author, content });
+                            method.Invoke(_example, new object[] { id, title, author, content });
                         }
                     }
                     else if (methodName == "Create")
@@ -115,7 +114,7 @@ public class MainLayout
                         string title = GetUserInput("Enter BlogTitle: ");
                         string author = GetUserInput("Enter BlogAuthor: ");
                         string content = GetUserInput("Enter BlogContent: ");
-                        method.Invoke(_adoExample, new object[] { title, author, content });
+                        method.Invoke(_example, new object[] { title, author, content });
                     }
                 }
                 catch (Exception ex)

@@ -17,7 +17,7 @@ public static class ExecuteAdoDotNet
         AdoDotNetExampleV3 adoDotNetExampleV3 = new(connection);
         AdoDotNetExampleV4 adoDotNetExampleV4 = new(adoService, connection);
 
-        IAdoExample adoExample = adoDotNetExampleV4;
+        IBaseExample adoExample = adoDotNetExampleV4;
 
         //adoDotNetExample.Run();
         //adoDotNetExampleV2.Run();

@@ -1,9 +1,7 @@
 ﻿using Dapper;
-using System;
-using System.Collections.Generic;
+using MPTDotNetCore.Shared.Models;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace MPTDotNetCore.Shared.Services;
 
@@ -20,25 +18,56 @@ public class DapperService<TModel> where TModel : class
 
     #endregion
 
-    public IEnumerable<TModel> Query(string sql, object param = null!)
+    #region Get List Query
+
+    public IEnumerable<TModel> Query(string query, object param = null!)
     {
         using IDbConnection db = new SqlConnection(_connection);
-        return db.Query<TModel>(sql, param).ToList();
+        return db.Query<TModel>(query, param).ToList();
     }
 
-    public TModel QuerySingle(string sql, object param = null!)
+    #endregion
+
+    #region GetById Query
+
+    public TModel QuerySingle(string query, object param = null!)
     {
         using IDbConnection db = new SqlConnection(_connection);
-        return db.Query<TModel>(sql, param).FirstOrDefault()!;
+        return db.Query<TModel>(query, param).FirstOrDefault()!;
     }
 
-    public void Execute(string sql, object param = null!)
+    #endregion
+
+    #region Execute Query
+
+    public void Execute(string query, string operation, object param = null!)
     {
         using IDbConnection db = new SqlConnection(_connection);
-        int result = db.Execute(sql, param);
+        int result = db.Execute(query, param);
 
-        string message = result > 0 ? "Operation Successful." : "Operation Failed.";
-        Console.WriteLine(message);
-        Console.WriteLine("===============================");
+        Console.WriteLine(result > 0 ? $"{operation} Successful." : $"{operation} Failed. No rows affected.");
     }
+
+    #endregion
+
+    #region Generate Data
+
+    public void DataList(IEnumerable<BlogModel> items)
+    {
+        if (items == null) return;
+
+        foreach (var item in items) DataList(items);
+    }
+
+    public void DataList(BlogModel item)
+    {
+        if (item == null) return;
+
+        Console.WriteLine($"Id: {item.BlogId}");
+        Console.WriteLine($"Title: {item.BlogTitle}");
+        Console.WriteLine($"Author: {item.BlogAuthor}");
+        Console.WriteLine($"Content: {item.BlogContent}");
+    }
+
+    #endregion
 }
