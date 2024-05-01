@@ -54,6 +54,11 @@ public class BlogController : ControllerBase
     [HttpDelete]
     public IActionResult Delete()
     {
-        return Ok();
+        var item = _db.TblBlogs.FirstOrDefault(x => x.BlogId == id);
+
+        if (item == null) return NotFound("No Data Found.");
+
+        _db.Remove(item);
+        return Ok(item);
     }
 }
