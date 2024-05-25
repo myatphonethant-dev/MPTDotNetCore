@@ -35,30 +35,55 @@ public class BlogController : ControllerBase
     public IActionResult Create(BlogModel model)
     {
         _db.TblBlogs.Add(model);
-        _db.SaveChanges();
-        return Ok();
+        var result = _db.SaveChanges();
+
+        var message = result > 0 ? "Saving Successful." : "Saving Failed.";
+        return Ok(message);
     }
 
-    [HttpPut]
-    public IActionResult Update()
-    {
-        return Ok();
-    }
-
-    [HttpPatch]
-    public IActionResult Patch()
-    {
-        return Ok();
-    }
-
-    [HttpDelete]
-    public IActionResult Delete()
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, BlogModel model)
     {
         var item = _db.TblBlogs.FirstOrDefault(x => x.BlogId == id);
 
         if (item == null) return NotFound("No Data Found.");
 
-        _db.Remove(item);
-        return Ok(item);
+        item.BlogTitle = model.BlogTitle;
+        item.BlogAuthor = model.BlogAuthor;
+        item.BlogContent = model.BlogContent;
+        var result = _db.SaveChanges();
+
+        var message = result > 0 ? "Update Successful." : "Update Failed.";
+        return Ok(message);
+    }
+
+    [HttpPatch("{id}")]
+    public IActionResult Patch(int id, BlogModel model)
+    {
+        var item = _db.TblBlogs.FirstOrDefault(x => x.BlogId == id);
+
+        if (item == null) return NotFound("No Data Found.");
+
+        if (string.IsNullOrEmpty(item.BlogTitle)) item.BlogTitle = model.BlogTitle;
+        if (string.IsNullOrEmpty(item.BlogAuthor)) item.BlogTitle = model.BlogAuthor;
+        if (string.IsNullOrEmpty(item.BlogContent)) item.BlogTitle = model.BlogContent;
+        var result = _db.SaveChanges();
+
+        var message = result > 0 ? "Update Successful." : "Update Failed.";
+        return Ok(message);
+    }
+
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        var item = _db.TblBlogs.FirstOrDefault(x => x.BlogId == id);
+
+        if (item == null) return NotFound("No Data Found.");
+
+        _db.TblBlogs.Remove(item);
+        var result = _db.SaveChanges();
+
+        var message = result > 0 ? "Delete Successful." : "Delete Failed.";
+        return Ok(message);
     }
 }
