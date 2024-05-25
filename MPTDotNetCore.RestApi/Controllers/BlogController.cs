@@ -64,9 +64,9 @@ public class BlogController : ControllerBase
 
         if (item == null) return NotFound("No Data Found.");
 
-        if (string.IsNullOrEmpty(item.BlogTitle)) item.BlogTitle = model.BlogTitle;
-        if (string.IsNullOrEmpty(item.BlogAuthor)) item.BlogTitle = model.BlogAuthor;
-        if (string.IsNullOrEmpty(item.BlogContent)) item.BlogTitle = model.BlogContent;
+        if (!string.IsNullOrEmpty(item.BlogTitle)) item.BlogTitle = model.BlogTitle;
+        if (!string.IsNullOrEmpty(item.BlogAuthor)) item.BlogTitle = model.BlogAuthor;
+        if (!string.IsNullOrEmpty(item.BlogContent)) item.BlogTitle = model.BlogContent;
         var result = _db.SaveChanges();
 
         var message = result > 0 ? "Update Successful." : "Update Failed.";
